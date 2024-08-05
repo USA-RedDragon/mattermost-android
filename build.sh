@@ -26,10 +26,12 @@ else
 fi
 
 # Clone the repo
-git clone -b ${MATTERMOST_VERSION} https://github.com/mattermost/mattermost-mobile.git ${MATTERMOST_DIR} --single-branch >/dev/null
+git clone https://github.com/mattermost/mattermost-mobile.git ${MATTERMOST_DIR}
 
 RUNDIR=$(pwd)
 cd ${MATTERMOST_DIR}
+git fetch --all --tags
+git checkout ${MATTERMOST_VERSION}
 
 nvm install `cat .node-version`
 nvm use `cat .node-version`
