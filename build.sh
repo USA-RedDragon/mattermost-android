@@ -21,7 +21,7 @@ cleanup() {
 trap cleanup EXIT ERR
 
 # Install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | env NVM_INC= NVM_CD_FLAGS= NVM_BIN= PROFILE=/dev/null HOME=${NVM_HOME_DIR} bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | env NVM_INC= NVM_DIR= NVM_CD_FLAGS= NVM_BIN= PROFILE=/dev/null HOME=${NVM_HOME_DIR} bash
 . ${NVM_DIR}/nvm.sh
 
 # Clone the repo
