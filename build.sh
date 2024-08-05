@@ -70,7 +70,7 @@ env \
   BUILD_FOR_RELEASE=${BUILD_FOR_RELEASE} \
   BETA_BUILD=${BETA_BUILD} \
   REPLACE_ASSETS=true \
-  SEPARATE_APKS=true \
+  SEPARATE_APKS=false \
   CI= \
   npm run build:android
 
