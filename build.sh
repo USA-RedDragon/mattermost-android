@@ -8,21 +8,22 @@ MATTERMOST_VERSION=v2.18.1
 NVM_VERSION=v0.40.0
 
 MATTERMOST_DIR=$(mktemp -d)
-NVM_HOME_DIR=$(mktemp -d)
-export NVM_DIR=${NVM_HOME_DIR}/.nvm
 
 # Clean up on exit
 cleanup() {
     set -x
     rm -rf ${MATTERMOST_DIR}
-    rm -rf ${NVM_HOME_DIR}
 }
 
 trap cleanup EXIT ERR
 
-# Install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | env NVM_INC= NVM_DIR= NVM_CD_FLAGS= NVM_BIN= PROFILE=/dev/null HOME=${NVM_HOME_DIR} bash
-. ${NVM_DIR}/nvm.sh
+if [ -f ${HOME}/.nvm/nvm.sh ]; then
+    . ${HOME}/.nvm/nvm.sh
+else
+    # Install nvm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
+    . ${HOME}/.nvm/nvm.sh
+fi
 
 # Clone the repo
 git clone -b ${MATTERMOST_VERSION} https://github.com/mattermost/mattermost-mobile.git ${MATTERMOST_DIR} --single-branch >/dev/null
