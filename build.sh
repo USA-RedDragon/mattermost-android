@@ -7,6 +7,9 @@ MATTERMOST_VERSION=v2.18.1
 # renovate: datasource=github-tags depName=nvm-sh/nvm
 NVM_VERSION=v0.40.0
 
+# Default to debug
+TYPE=${1:-debug}
+
 MATTERMOST_DIR=$(mktemp -d)
 
 # Clean up on exit
@@ -51,12 +54,21 @@ elif [ -f "${RUNDIR}/google-services.json" ]; then
     cp ${RUNDIR}/google-services.json ${MATTERMOST_DIR}/android/app/google-services.json
 fi
 
+# Set BETA_BUILD to true if we are building TYPE=release
+if [ "${TYPE}" = "release" ]; then
+    BETA_BUILD=true
+    BUILD_FOR_RELEASE=true
+else
+    BETA_BUILD=false
+    BUILD_FOR_RELEASE=false
+fi
+
 # Build the app
 env \
   APP_NAME=Mattermost \
   MAIN_APP_IDENTIFIER=dev.mcswain.mattermost \
-  BUILD_FOR_RELEASE=true \
-  BETA_BUILD=false \
+  BUILD_FOR_RELEASE=${BUILD_FOR_RELEASE} \
+  BETA_BUILD=${BETA_BUILD} \
   REPLACE_ASSETS=true \
   SEPARATE_APKS=true \
   CI= \

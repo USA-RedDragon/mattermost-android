@@ -26,6 +26,7 @@ jobs:
           bundler-cache: true
 
       - name: Configure Gradle Properties
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           mkdir -p ~/.gradle
           echo "MATTERMOST_RELEASE_KEY_ALIAS=mattermost" > ~/.gradle/gradle.properties
@@ -38,15 +39,27 @@ jobs:
         run: |
           set -euxo pipefail
 
-          bash build.sh
+          # If the commit is a push to master, type should be debug
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            BUILD_TYPE=release
+          else
+            BUILD_TYPE=debug
+          fi
+
+          bash build.sh ${BUILD_TYPE}
 
           # Exit if .buildinfo is empty or does not exist
           [ -s .buildinfo ]
+
+          # Exit if apk does not exist
+          [ -s Mattermost.apk ]
 
           # Set output variables
           for line in $(cat .buildinfo); do
             echo "$line" >> $GITHUB_OUTPUT
           done
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: Find latest tag
         id: tagger
