@@ -61,6 +61,13 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
+      - name: Upload APK on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mattermost
+          path: '*.apk'
+
       - name: Find latest tag
         id: tagger
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
