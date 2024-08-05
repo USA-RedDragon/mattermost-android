@@ -56,10 +56,10 @@ fi
 
 # Set BETA_BUILD to true if we are building TYPE=release
 if [ "${TYPE}" = "release" ]; then
-    BETA_BUILD=true
+    BETA_BUILD=false
     BUILD_FOR_RELEASE=true
 else
-    BETA_BUILD=false
+    BETA_BUILD=true
     BUILD_FOR_RELEASE=false
 fi
 
