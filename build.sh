@@ -1,0 +1,69 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# renovate: datasource=github-tags depName=mattermost/mattermost-mobile
+MATTERMOST_VERSION=v2.18.1
+# renovate: datasource=github-tags depName=nvm-sh/nvm
+NVM_VERSION=v0.40.0
+
+MATTERMOST_DIR=$(mktemp -d)
+NVM_HOME_DIR=$(mktemp -d)
+NVM_DIR=${NVM_HOME_DIR}/.nvm
+
+# Clean up on exit
+cleanup() {
+    set -x
+    rm -rf ${MATTERMOST_DIR}
+    rm -rf ${NVM_HOME_DIR}
+}
+
+trap cleanup EXIT ERR
+
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | env NVM_INC= NVM_DIR= NVM_CD_FLAGS= NVM_BIN= PROFILE=/dev/null HOME=${NVM_HOME_DIR} bash
+. ${NVM_DIR}/nvm.sh
+
+# Clone the repo
+git clone -b ${MATTERMOST_VERSION} https://github.com/mattermost/mattermost-mobile.git ${MATTERMOST_DIR} --single-branch >/dev/null
+
+RUNDIR=$(pwd)
+cd ${MATTERMOST_DIR}
+
+nvm install `cat .node-version`
+nvm use `cat .node-version`
+
+sed -i 's/ && npx solidarity//g' package.json
+npm ci
+
+mkdir -p assets/override
+cp ${RUNDIR}/override.json assets/override/config.json
+
+# Check if GOOGLE_SERVICES_JSON is set
+if [ -n "${GOOGLE_SERVICES_JSON:-}" ]; then
+    echo "Using GOOGLE_SERVICES_JSON from the environment"
+    echo "${GOOGLE_SERVICES_JSON}" > ${MATTERMOST_DIR}/android/app/google-services.json
+elif [ -f "${RUNDIR}/google-services.json" ]; then
+    echo "Using google-services.json from the repository"
+    cp ${RUNDIR}/google-services.json ${MATTERMOST_DIR}/android/app/google-services.json
+fi
+
+# Build the app
+env \
+  APP_NAME=Mattermost \
+  MAIN_APP_IDENTIFIER=dev.mcswain.mattermost \
+  BUILD_FOR_RELEASE=true \
+  BETA_BUILD=false \
+  REPLACE_ASSETS=true \
+  SEPARATE_APKS=true \
+  CI= \
+  npm run build:android
+
+cd ${RUNDIR}
+cp -v ${MATTERMOST_DIR}/*.apk .
+
+if [ -n "${GITHUB_WORKFLOW:-}" ]; then
+    cat <<__EOF__ > .buildinfo
+MATTERMOST_VERSION=${MATTERMOST_VERSION}
+__EOF__
+fi
