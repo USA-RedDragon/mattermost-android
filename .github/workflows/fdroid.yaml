@@ -39,6 +39,16 @@ jobs:
     - name: Move apk to fdroid
       run: mv Mattermost.apk fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
 
+    - name: Run fdroid update
+      run: cd fdroid && fdroid update --pretty
+
+    - name: Debug
+      run: |
+        set -x
+        ls -lah
+        ls -lah fdroid
+        ls -lah fdroid/public
+
     - name: Shred keystore and config
       if: always()
       run: |
