@@ -4,8 +4,15 @@ on:
       - released
   workflow_dispatch:
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   fdroid:
+    environment:
+      name: github-pages
+      url: ${{ steps.fdroid .outputs.page_url }}
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout fdroid branch
@@ -45,6 +52,18 @@ jobs:
       run: |
         set -x
         ls -lah /fdroid
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '/fdroid'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 
     - name: Shred keystore
       if: always()
