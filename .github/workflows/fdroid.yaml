@@ -17,16 +17,11 @@ jobs:
     - name: Install fdroid server
       run: |
         echo ${FDROID_KEYSTORE} | base64 -d > keystore.jks
-        chmod 600 fdroid/config.yml keystore.jks
+        chmod 600 keystore.jks
         mkdir -p fdroid/repo
         sudo add-apt-repository ppa:fdroid/fdroidserver
         sudo apt-get update
         sudo apt-get install fdroidserver
-      env:
-        FDROID_KEYSTORE: "${{ secrets.FDROID_KEYSTORE }}"
-        FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
-        FDROID_KEYSTOREPASS: "${{ secrets.FDROID_KEYSTORE_PASSWORD }}"
-        VIRUSTOTAL_APIKEY: "${{ secrets.VIRUSTOTAL_APIKEY }}"
 
     - name: Download apk
       uses: robinraju/release-downloader@v1
@@ -40,14 +35,18 @@ jobs:
 
     - name: Run fdroid update
       run: cd fdroid && fdroid update --pretty
+      env:
+        FDROID_KEYSTORE: "${{ secrets.FDROID_KEYSTORE }}"
+        FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
+        FDROID_KEYSTOREPASS: "${{ secrets.FDROID_KEYSTORE_PASSWORD }}"
+        VIRUSTOTAL_APIKEY: "${{ secrets.VIRUSTOTAL_APIKEY }}"
 
     - name: Debug
       run: |
         set -x
         ls -lah /fdroid
 
-    - name: Shred keystore and config
+    - name: Shred keystore
       if: always()
       run: |
-        shred -n 5 -f keystore.jks || true
-        shred -n 5 -f fdroid/config.py || true  
+        shred -n 5 -f keystore.jks || true 
