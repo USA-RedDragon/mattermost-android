@@ -105,6 +105,7 @@ jobs:
           tag: ${{steps.build.outputs.MATTERMOST_VERSION}}
           name: ${{steps.build.outputs.MATTERMOST_VERSION}}
           draft: false
+          makeLatest: true
           body: |
             [Mattermost Android ${{steps.build.outputs.MATTERMOST_VERSION}}](https://github.com/mattermost/mattermost-mobile/releases/tag/${{steps.build.outputs.MATTERMOST_VERSION}})
 
