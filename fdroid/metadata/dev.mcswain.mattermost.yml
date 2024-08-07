@@ -1,0 +1,17 @@
+Categories:
+- Internet
+- Phone & SMS
+IssueTracker: https://github.com/USA-RedDragon/mattermost-android/issues
+Name: Mattermost
+SourceCode: https://github.com/USA-RedDragon/mattermost-android
+Summary: Mattermost McSwain
+WebSite: https://mattermost.com
+Changelog: https://github.com/USA-RedDragon/mattermost-android/commits/main/
+Description: Mattermost compiled for personal use.
+RepoType: git
+Repo: https://github.com/mattermost/mattermost-mobile
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+UpdateCheckData: android/app/build.gradle|versionCode\s(\d+)|.|versionName\s"(.+)"
+License: Apache-2.0
+AllowedAPKSigningKeys: [ca0d229723be4b2af2de9f9eb1b2f104097a3e8fafa711f8b212a79ff60d729d]
