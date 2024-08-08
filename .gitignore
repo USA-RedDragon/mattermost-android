@@ -2,3 +2,4 @@ venv/
 keystore.jks
 fdroid/tmp/
 fdroid/repo/status/
+tmp/
