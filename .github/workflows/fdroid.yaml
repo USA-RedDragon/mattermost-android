@@ -1,3 +1,5 @@
+name: F-Droid
+
 on:
   release:
     types:
@@ -15,7 +17,7 @@ jobs:
   fdroid:
     environment:
       name: github-pages
-      url: ${{ steps.fdroid.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout fdroid branch
