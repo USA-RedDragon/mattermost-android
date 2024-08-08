@@ -7,7 +7,7 @@ archive_description: This is a custom F-Droid archive for the McSwain Mattermost
 archive_older: 5
 local_copy_dir: /home/runner/work/fdroid
 
-keystore: ../keystore.jks
+keystore: keystore.jks
 repo_keyalias: localhost.localdomain
 keydname: CN=localhost.localdomain, OU=F-Droid
 keypass: {env: FDROID_KEYPASS}
