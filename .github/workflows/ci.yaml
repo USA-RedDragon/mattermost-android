@@ -175,7 +175,8 @@ jobs:
     - name: Commit repo
       run: |
         cd fdroid
-        git commit --signoff -m "Mattermost ${{ github.event.release.tag_name }}" .
+        git add .
+        git commit --signoff -m "Mattermost ${{ github.event.release.tag_name }}"
         git reset $(git commit-tree HEAD^{tree} -m "Mattermost ${{ github.event.release.tag_name }}")
         git push --force origin HEAD:refs/heads/fdroid
       env:
