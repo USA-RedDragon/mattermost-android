@@ -2,7 +2,6 @@ on:
   release:
     types:
       - released
-  workflow_dispatch:
 
 concurrency:
   group: "pages"
@@ -44,6 +43,13 @@ jobs:
     - name: Move apk to fdroid
       run: mv Mattermost.apk fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
 
+    - name: Commit apk
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -m "Mattermost ${{ github.event.release.tag_name }}" fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
+        git push --force-with-lease origin HEAD:refs/heads/fdroid
+
     - name: Run fdroid update
       run: |
         cd fdroid
@@ -54,11 +60,6 @@ jobs:
         FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
         FDROID_KEY_STORE_PASS: "${{ secrets.FDROID_KEY_STORE_PASS }}"
         VIRUSTOTAL_APIKEY: "${{ secrets.VIRUSTOTAL_APIKEY }}"
-
-    - name: Debug
-      run: |
-        set -x
-        ls -lah /home/runner/work/fdroid/
 
     - name: Setup Pages
       uses: actions/configure-pages@v5
