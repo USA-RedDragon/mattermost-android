@@ -41,7 +41,11 @@ jobs:
       run: mv Mattermost.apk fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
 
     - name: Run fdroid update
-      run: cd fdroid && fdroid update --pretty
+      run: |
+        cd fdroid
+        fdroid update --pretty
+        mkdir /fdroid
+        fdroid deploy
       env:  
         FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
         FDROID_KEY_STORE_PASS: "${{ secrets.FDROID_KEY_STORE_PASS }}"
