@@ -9,7 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-
+    outputs:
+      MATTERMOST_VERSION: ${{ steps.build.outputs.MATTERMOST_VERSION }}
+      NEWTAG: ${{ steps.tag.outputs.newtag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -112,3 +114,89 @@ jobs:
         run: |
           shred -n 5 -f ~/.gradle/mattermost.keystore || true
           shred -n 5 -f ~/.gradle/gradle.properties || true
+
+  fdroid:
+    needs: [ build ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.outputs.NEWTAG == 'true'
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout fdroid branch
+      uses: actions/checkout@v4
+      with:
+        ref: fdroid
+        fetch-depth: 0
+        path: fdroid
+
+    - name: Install fdroid server
+      run: |
+        cd fdroid
+        echo -n '${{ secrets.FDROID_KEYSTORE }}' | base64 -d > keystore.jks
+        chmod 600 keystore.jks config.yml
+        mkdir -p repo
+        sudo add-apt-repository ppa:fdroid/fdroidserver
+        sudo apt-get update
+        sudo apt-get install fdroidserver
+
+    - name: Download apk
+      uses: robinraju/release-downloader@v1
+      with:
+        tag: "${{ github.event.release.tag_name }}"
+        latest: true
+        fileName: "Mattermost.apk"
+
+    - name: Move apk to fdroid
+      run: mv Mattermost.apk fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
+
+    - name: Setup GPG
+      id: import-gpg
+      uses: crazy-max/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        git_config_global: true
+        git_user_signingkey: true
+        git_commit_gpgsign: true
+
+    - name: Run fdroid update
+      run: |
+        cd fdroid
+        fdroid update --pretty
+        mkdir /home/runner/work/fdroid
+        fdroid deploy
+      env:  
+        FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
+        FDROID_KEY_STORE_PASS: "${{ secrets.FDROID_KEY_STORE_PASS }}"
+
+    - name: Commit repo
+      run: |
+        cd fdroid
+        git commit --signoff -m "Mattermost ${{ github.event.release.tag_name }}" .
+        git reset $(git commit-tree HEAD^{tree} -m "Mattermost ${{ github.event.release.tag_name }}")
+        git push --force origin HEAD:refs/heads/fdroid
+      env:
+        GIT_AUTHOR_NAME: ${{ steps.import-gpg.outputs.name }}
+        GIT_AUTHOR_EMAIL: ${{ steps.import-gpg.outputs.email }}
+        GIT_COMMITTER_NAME: ${{ steps.import-gpg.outputs.name }}
+        GIT_COMMITTER_EMAIL: ${{ steps.import-gpg.outputs.email }}
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '/home/runner/work/fdroid/'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Shred keystore
+      if: always()
+      run: |
+        shred -n 5 -f fdroid/keystore.jks || true 
