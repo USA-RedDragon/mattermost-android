@@ -23,12 +23,14 @@ jobs:
 
     - name: Install fdroid server
       run: |
-        echo ${FDROID_KEYSTORE} | base64 -d > keystore.jks
+        echo -n '${FDROID_KEYSTORE}' | base64 -d > keystore.jks
         chmod 600 keystore.jks fdroid/config.yml 
         mkdir -p fdroid/repo
         sudo add-apt-repository ppa:fdroid/fdroidserver
         sudo apt-get update
         sudo apt-get install fdroidserver
+      env:
+        FDROID_KEYSTORE: "${{ secrets.FDROID_KEYSTORE }}"
 
     - name: Download apk
       uses: robinraju/release-downloader@v1
@@ -42,8 +44,7 @@ jobs:
 
     - name: Run fdroid update
       run: cd fdroid && fdroid update --pretty
-      env:
-        FDROID_KEYSTORE: "${{ secrets.FDROID_KEYSTORE }}"
+      env:  
         FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
         FDROID_KEY_STORE_PASS: "${{ secrets.FDROID_KEY_STORE_PASS }}"
         VIRUSTOTAL_APIKEY: "${{ secrets.VIRUSTOTAL_APIKEY }}"
