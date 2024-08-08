@@ -27,8 +27,8 @@ jobs:
     - name: Install fdroid server
       run: |
         echo -n '${{ secrets.FDROID_KEYSTORE }}' | base64 -d > keystore.jks
-        chmod 600 keystore.jks fdroid/config.yml 
-        mkdir -p fdroid/repo
+        chmod 600 keystore.jks config.yml
+        mkdir -p repo
         sudo add-apt-repository ppa:fdroid/fdroidserver
         sudo apt-get update
         sudo apt-get install fdroidserver
@@ -41,18 +41,10 @@ jobs:
         fileName: "Mattermost.apk"
 
     - name: Move apk to fdroid
-      run: mv Mattermost.apk fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
-
-    - name: Commit apk
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git commit -m "Mattermost ${{ github.event.release.tag_name }}" fdroid/repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
-        git push --force-with-lease origin HEAD:refs/heads/fdroid
+      run: mv Mattermost.apk repo/dev.mcswain.mattermost-${{ github.event.release.tag_name }}.apk
 
     - name: Run fdroid update
       run: |
-        cd fdroid
         fdroid update --pretty
         mkdir /home/runner/work/fdroid
         fdroid deploy
@@ -60,6 +52,14 @@ jobs:
         FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
         FDROID_KEY_STORE_PASS: "${{ secrets.FDROID_KEY_STORE_PASS }}"
         VIRUSTOTAL_APIKEY: "${{ secrets.VIRUSTOTAL_APIKEY }}"
+
+    - name: Commit repo
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -m "Mattermost ${{ github.event.release.tag_name }}" .
+        git reset $(git commit-tree HEAD^{tree} -m "Mattermost ${{ github.event.release.tag_name }}")
+        git push --force origin HEAD:refs/heads/fdroid
 
     - name: Setup Pages
       uses: actions/configure-pages@v5
