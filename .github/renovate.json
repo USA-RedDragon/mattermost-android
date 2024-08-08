@@ -2,5 +2,14 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "local>USA-RedDragon/renovate-configs"
+    ],
+    "regexManagers": [
+        {
+            "fileMatch": ["^.java-version$"],
+            "matchStrings": ["^(?<currentValue>.*)$"],
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "semver",
+            "depNameTemplate": "amazoncorretto"
+        }
     ]
 }
