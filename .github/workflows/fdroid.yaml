@@ -44,7 +44,7 @@ jobs:
       run: |
         cd fdroid
         fdroid update --pretty
-        mkdir /home/runner/work/out
+        mkdir /home/runner/work/fdroid
         fdroid deploy
       env:  
         FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
@@ -54,7 +54,7 @@ jobs:
     - name: Debug
       run: |
         set -x
-        ls -lah /home/runner/work/out/
+        ls -lah /home/runner/work/fdroid/
 
     - name: Setup Pages
       uses: actions/configure-pages@v5
@@ -62,7 +62,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: '/home/runner/work/out/'
+        path: '/home/runner/work/fdroid/'
 
     - name: Deploy to GitHub Pages
       id: deployment
