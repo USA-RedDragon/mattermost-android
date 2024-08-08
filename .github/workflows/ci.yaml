@@ -173,19 +173,6 @@ jobs:
         FDROID_KEYPASS: "${{ secrets.FDROID_KEY_PASSWORD }}"
         FDROID_KEY_STORE_PASS: "${{ secrets.FDROID_KEY_STORE_PASS }}"
 
-    - name: Commit repo
-      run: |
-        cd fdroid
-        git add .
-        git commit --signoff -m "Mattermost ${{ github.event.release.tag_name }}"
-        git reset $(git commit-tree HEAD^{tree} -m "Mattermost ${{ github.event.release.tag_name }}")
-        git push --force origin HEAD:refs/heads/fdroid
-      env:
-        GIT_AUTHOR_NAME: ${{ steps.import-gpg.outputs.name }}
-        GIT_AUTHOR_EMAIL: ${{ steps.import-gpg.outputs.email }}
-        GIT_COMMITTER_NAME: ${{ steps.import-gpg.outputs.name }}
-        GIT_COMMITTER_EMAIL: ${{ steps.import-gpg.outputs.email }}
-
     - name: Setup Pages
       uses: actions/configure-pages@v5
 
