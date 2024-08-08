@@ -9,5 +9,5 @@ keystore: ../keystore.jks
 repo_keyalias: localhost.localdomain
 keydname: CN=localhost.localdomain, OU=F-Droid
 keypass: {env: FDROID_KEYPASS}
-keystorepass: {env: FDROID_KEYSTOREPASS}
+keystorepass: {env: FDROID_KEY_STORE_PASS}
 virustotal_apikey: {env: VIRUSTOTAL_APIKEY}
