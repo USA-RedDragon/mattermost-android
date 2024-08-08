@@ -1,7 +1,11 @@
 repo_url: https://usa-reddragon.github.io/mattermost-android/repo
 repo_name: McSwain Mattermost F-Droid repo
 repo_description: This is a custom F-Droid repository for the McSwain Mattermost app.
-archive_older: 0
+archive_url: https://usa-reddragon.github.io/mattermost-android/archive
+archive_name: McSwain Mattermost F-Droid archive
+archive_description: This is a custom F-Droid archive for the McSwain Mattermost app.
+archive_older: 5
+per_app_repos: true
 local_copy_dir: /home/runner/work/fdroid
 
 keystore: ../keystore.jks
