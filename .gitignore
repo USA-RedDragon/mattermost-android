@@ -2,4 +2,3 @@ venv/
 keystore.jks
 fdroid/tmp/
 fdroid/repo/status/
-fdroid/repo/*.apk
