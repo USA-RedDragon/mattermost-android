@@ -3,7 +3,7 @@
     "extends": [
         "local>USA-RedDragon/renovate-configs"
     ],
-    "separateMultiplePatch": true,
+    "separateMinorPatch": true,
     "regexManagers": [
         {
             "fileMatch": ["^.java-version$"],
