@@ -6,6 +6,7 @@
     "separateMinorPatch": true,
     "separateMultipleMinor": true,
     "separateMultipleMajor": true,
+    "separateMajorMinor": true,
     "regexManagers": [
         {
             "fileMatch": ["^.java-version$"],
