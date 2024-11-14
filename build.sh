@@ -63,6 +63,8 @@ else
     BUILD_FOR_RELEASE=false
 fi
 
+sed -i 's#^distributionUrl=https\\://services.gradle.org/distributions/gradle-\(.*\)-all.zip$#distributionUrl=https\\://services.gradle.org/distributions/gradle-\1-bin.zip#' android/gradle/wrapper/gradle-wrapper.properties
+
 # Build the app
 env \
   APP_NAME=Mattermost \
