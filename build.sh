@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # renovate: datasource=github-tags depName=mattermost/mattermost-mobile
-MATTERMOST_VERSION=v2.33.0
+MATTERMOST_VERSION=v2.33.1
 # renovate: datasource=github-tags depName=nvm-sh/nvm
 NVM_VERSION=v0.40.3
 
