@@ -18,7 +18,7 @@ jobs:
       NEWTAG: ${{ steps.tag.outputs.newtag }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - uses: actions/setup-java@v4
         with:
@@ -132,7 +132,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout fdroid branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         ref: fdroid
         fetch-depth: 0
