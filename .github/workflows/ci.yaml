@@ -25,7 +25,7 @@ jobs:
           distribution: 'corretto'
           java-version-file: '.java-version'
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@06ab568b6a2427d46e8b64c2006cb36531af3de9 # v1.18.0
         with:
           bundler-cache: true
 
