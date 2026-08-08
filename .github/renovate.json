@@ -7,10 +7,15 @@
     "separateMultipleMinor": true,
     "separateMultipleMajor": true,
     "separateMajorMinor": true,
-    "regexManagers": [
+    "customManagers": [
         {
-            "fileMatch": ["^.java-version$"],
-            "matchStrings": ["^(?<currentValue>.*)$"],
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/^.java-version$/"
+            ],
+            "matchStrings": [
+                "^(?<currentValue>.*)$"
+            ],
             "datasourceTemplate": "docker",
             "versioningTemplate": "semver",
             "depNameTemplate": "amazoncorretto"
