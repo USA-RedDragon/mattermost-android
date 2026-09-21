@@ -5,7 +5,7 @@ set -euo pipefail
 # renovate: datasource=github-tags depName=mattermost/mattermost-mobile
 MATTERMOST_VERSION=v2.44.0
 # renovate: datasource=github-tags depName=nvm-sh/nvm
-NVM_VERSION=v0.40.7
+NVM_VERSION=v0.40.8
 
 # Default to debug
 TYPE=${1:-debug}
